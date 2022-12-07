@@ -1,13 +1,15 @@
 import * as THREE from "three";
+import { scene } from "./scene";
 
-export function createCamera() {
-  let camera = new THREE.PerspectiveCamera(
-    75,
-    window.offsetWidth / window.offsetHeight,
-    2 ** -10,
-    10 ** 8
-  );
-  camera.position.set(5, 10, 15);
+let camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 0, 5);
+camera.lookAt(0, 0, 0);
 
-  return camera;
-}
+scene.add(camera);
+
+export { camera };
