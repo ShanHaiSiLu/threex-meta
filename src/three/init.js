@@ -17,16 +17,10 @@ export function init(threeWrapper) {
   initResizeListen(threeWrapper);
   // 加载环境模型
   loadEnv();
-
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
 }
 
 export function animationRender() {
   requestAnimationFrame(animationRender);
-  console.log("更新");
 
   renderer.render(scene, camera);
 }
