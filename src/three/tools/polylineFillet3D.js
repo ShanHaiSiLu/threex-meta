@@ -5,7 +5,7 @@ import * as THREE from "three";
  * 然后一个原始点演化出的两个接触点之间用三维二次贝塞尔曲线连接（原始点当做控制点）
  * 不同点演化出的接触点之间、接触点和起点终点之间用直线连接
  */
-export default class MiniAngleCurvePath {
+export class MiniAngleCurvePath {
   // 静态变量，path
   path = new THREE.CurvePath();
   // 半径

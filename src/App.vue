@@ -1,11 +1,13 @@
 <template>
-  <div :ref="getRendererDom" class="three-wrapper"></div>
+  <div :ref="getRendererDom" class="three-wrapper" @click="pointerLock"></div>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
-import { init, animationRender } from "./three/init";
 import * as THREE from "three";
+
+import { init, animationRender } from "./three/init";
+import { pointerLock } from "./three/player/playerPhysics";
 
 let threeWrapper;
 
@@ -16,12 +18,7 @@ function getRendererDom(el) {
 onMounted(() => {
   init(threeWrapper);
   animationRender();
-  // test();
 });
-
-function test() {
- 
-}
 </script>
 
 <style>
