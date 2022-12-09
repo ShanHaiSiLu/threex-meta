@@ -176,7 +176,7 @@ function updatePlayer(deltaTime) {
     0.5
   );
   player.position.copy(playerCollider.start);
-  player.position.y -= 0.3;
+  player.position.y -= 0.45;
 }
 
 // 用户碰撞检测
