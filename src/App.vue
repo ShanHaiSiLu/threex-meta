@@ -1,5 +1,6 @@
 <template>
   <div :ref="getRendererDom" class="three-wrapper" @click="pointerLock"></div>
+  <!-- @click="pointerLock" -->
 </template>
 
 <script setup>

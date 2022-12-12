@@ -42,7 +42,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
   #spherical = new Spherical();
   #sphericalDelta = new Spherical();
 
-  // 缩放量
+  // 缩放比例
   #zoomScale = 1;
 
   // 创建球坐标时保存的quat的共轭四元数（翻转四元数、反向四元数）
@@ -54,7 +54,10 @@ export class PointerLockOrbitControls extends EventDispatcher {
   // 滑动鼠标旋转时，将鼠标的屏幕移动量xy转化为角度用的中间变量
   #rotateDelta = new Vector2();
 
-  constructor(object, domElement, target) {
+  // 默认的球坐标半径
+  #defaultRadius;
+
+  constructor(object, domElement, target, radius) {
     super();
 
     if (!object) {
@@ -70,6 +73,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
     this.object = object;
     this.domElement = domElement;
     this.target = target;
+    if (radius) this.#defaultRadius = radius;
 
     this.#connect();
   }
@@ -78,7 +82,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
     // DOM的指针锁定回调
     this.domElement.ownerDocument.addEventListener(
       "pointerlockchange",
-      this.#onPointerlockChange,
+      this.#onPointerlockChange
     );
 
     /**
@@ -89,13 +93,13 @@ export class PointerLockOrbitControls extends EventDispatcher {
      */
     this.domElement.ownerDocument.addEventListener(
       "pointermove",
-      this.#onPointerMove,
+      this.#onPointerMove
     );
 
     this.domElement.ownerDocument.addEventListener(
       "wheel",
       this.#onMouseWheel,
-      { passive: false },
+      { passive: false }
     );
   }
 
@@ -115,7 +119,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
 
   // 鼠标移动事件，根据移动量xy更新sphericalDelta的φθ
   // 依据sphericalDelta更新spherical，依据spherical更新camra.position
-  #onPointerMove = e => {
+  #onPointerMove = (e) => {
     // 默认e.pointerType为mouse，也就是在PC上进行操作；
     // e.pointerType为touch的手机事件暂时忽略
 
@@ -130,15 +134,15 @@ export class PointerLockOrbitControls extends EventDispatcher {
       .multiplyScalar(this.rotateSpeed);
 
     this.#rotateLeft(
-      (2 * Math.PI * this.#rotateDelta.x) / this.domElement.clientHeight,
+      (2 * Math.PI * this.#rotateDelta.x) / this.domElement.clientHeight
     );
     this.#rotateUp(
-      (2 * Math.PI * this.#rotateDelta.y) / this.domElement.clientHeight,
+      (2 * Math.PI * this.#rotateDelta.y) / this.domElement.clientHeight
     );
   };
 
   // 监听鼠标的滚轮事件，更新球坐标的r
-  #onMouseWheel = e => {
+  #onMouseWheel = (e) => {
     if (!this.isLocked) return;
 
     // 更新球坐标的r
@@ -150,11 +154,11 @@ export class PointerLockOrbitControls extends EventDispatcher {
   };
 
   // 滑动鼠标时，左右移动的距离映射为角度后，设定为修改θ的角度（绕y轴旋转的角度）
-  #rotateLeft = angle => {
+  #rotateLeft = (angle) => {
     this.#sphericalDelta.theta -= angle;
   };
   // 滑动鼠标时，上下移动的距离映射为角度后，设定为修改φ的角度
-  #rotateUp = angle => {
+  #rotateUp = (angle) => {
     this.#sphericalDelta.phi -= angle;
   };
 
@@ -163,13 +167,15 @@ export class PointerLockOrbitControls extends EventDispatcher {
     // 计算摄像机的up与y轴正方向的差值（大多数时候都是{ x: 0, y: 0, z: 0, w: 1 }）
     const quat = new Quaternion().setFromUnitVectors(
       this.object.up,
-      new Vector3(0, 1, 0),
+      new Vector3(0, 1, 0)
     );
     this.#quatInverse = quat.clone().invert();
 
     this.#offset.copy(this.object.position).sub(this.target);
     this.#offset.applyQuaternion(quat);
     this.#spherical.setFromVector3(this.#offset);
+
+    this.#spherical.radius = this.#defaultRadius;
   };
 
   // 更新控制器的方法，将鼠标滑动和滚轮滚动产生的变化更新到相机上
@@ -195,7 +201,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
       if (this.minAzimuthAngle < this.maxAzimuthAngle) {
         this.#spherical.theta = Math.max(
           this.minAzimuthAngle,
-          Math.min(this.maxAzimuthAngle, this.#spherical.theta),
+          Math.min(this.maxAzimuthAngle, this.#spherical.theta)
         );
       } else {
         this.#spherical.theta =
@@ -209,7 +215,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
     // 垂直夹角限制
     this.#spherical.phi = Math.max(
       this.minPolarAngle,
-      Math.min(this.maxPolarAngle, this.#spherical.phi),
+      Math.min(this.maxPolarAngle, this.#spherical.phi)
     );
 
     // 根据zoomScale更新球坐标的r
@@ -217,7 +223,7 @@ export class PointerLockOrbitControls extends EventDispatcher {
     // 半径大小限制
     this.#spherical.radius = Math.max(
       this.minDistance,
-      Math.min(this.maxDistance, this.#spherical.radius),
+      Math.min(this.maxDistance, this.#spherical.radius)
     );
 
     // 防止角度死锁，否则会在跨越(0,1,0)和(0,-1,0)是发生xz轴的反转

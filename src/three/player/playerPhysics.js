@@ -67,7 +67,8 @@ function initPointerLockOrbit() {
   pointerOrbitController = new PointerLockOrbitControls(
     camera,
     renderer.domElement,
-    playerCollider.end
+    playerCollider.end,
+    1
   );
 
   // 垂直角度限制
@@ -82,6 +83,10 @@ function initPointerLockOrbit() {
   });
   pointerOrbitController.addEventListener("unlock", () => {
     orbitController.enabled = true;
+    camera.position.y += 3;
+    camera.position.z -= 3;
+    camera.lookAt(player.position)
+    orbitController.target.copy(player.position);
   });
 }
 

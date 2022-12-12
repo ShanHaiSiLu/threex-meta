@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 import { scene } from "../basic";
+import { initWater } from "./water";
 import { worldOctree, initOctreeHelper } from "../player/playerPhysics";
 
 let envModel;
@@ -23,11 +24,17 @@ export function loadEnv() {
       envModel.position.y -= 20;
 
       envModel.traverse((child) => {
+        // 铺设阴影
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
         }
 
+        if (child.name.includes("Plane003"))
+          // 水面处理
+          initWater(child);
+
+        // 物理模型处理
         if (child.hasOwnProperty("userData")) {
           if (child.userData.hasOwnProperty("data")) {
             if (child.userData.data === "physics") {
