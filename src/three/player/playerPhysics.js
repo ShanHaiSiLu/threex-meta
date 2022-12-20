@@ -19,10 +19,15 @@ let worldOctreeHelper;
 // 第三人称控制器
 let pointerOrbitController;
 
+// 跳跃的高度
+let th = 15;
+// 移动速度
+let sd = 5;
+
 const playerCollider = new Capsule(
   new THREE.Vector3(0, 0.45, 0),
   new THREE.Vector3(0, 1.45, 0),
-  0.45
+  0.45,
 );
 const GRAVITY = 30;
 // 胶囊体形状
@@ -48,10 +53,10 @@ const keyMovementStates = {};
 
 // 初始化角色物理世界
 export function initPlayerPhysics() {
-  addKeydownFun((keyCode) => {
+  addKeydownFun(keyCode => {
     keyMovementStates[keyCode] = true;
   });
-  addKeyupFun((keyCode) => {
+  addKeyupFun(keyCode => {
     keyMovementStates[keyCode] = false;
   });
 
@@ -68,7 +73,7 @@ function initPointerLockOrbit() {
     camera,
     renderer.domElement,
     playerCollider.end,
-    1
+    1,
   );
 
   // 垂直角度限制
@@ -85,7 +90,7 @@ function initPointerLockOrbit() {
     orbitController.enabled = true;
     camera.position.y += 3;
     camera.position.z -= 3;
-    camera.lookAt(player.position)
+    camera.lookAt(player.position);
     orbitController.target.copy(player.position);
   });
 }
@@ -98,7 +103,7 @@ export function pointerLock() {
 // 更新角色位置（胶囊位置）
 export function updatePlayerCapsulePosition() {
   if ((envModel, player))
-    updatePlayerCapsulePosition = (deltaTimes) => {
+    updatePlayerCapsulePosition = deltaTimes => {
       const deltaTime = Math.min(0.05, deltaTimes) / STEPS_PER_FRAME;
 
       for (let i = 0; i < STEPS_PER_FRAME; i++) {
@@ -150,7 +155,7 @@ function updateControlsForKey(deltaTime) {
 
   if (playerOnFloor) {
     if (keyMovementStates["Space"]) {
-      playerVelocity.y = 15;
+      playerVelocity.y = th;
     }
   }
 }
@@ -170,7 +175,7 @@ function updatePlayer(deltaTime) {
 
   const deltaPosition = playerVelocity
     .clone()
-    .multiplyScalar(deltaTime * (keyMovementStates["ShiftLeft"] ? 10 : 5));
+    .multiplyScalar(deltaTime * (keyMovementStates["ShiftLeft"] ? sd * 2 : sd));
   playerCollider.translate(deltaPosition);
 
   playerCollisions();
@@ -178,7 +183,7 @@ function updatePlayer(deltaTime) {
   playerCapsule.position.lerpVectors(
     playerCollider.end,
     playerCollider.start,
-    0.5
+    0.5,
   );
   player.position.copy(playerCollider.start);
   player.position.y -= 0.45;
@@ -196,7 +201,7 @@ function playerCollisions() {
     if (!playerOnFloor) {
       playerVelocity.addScaledVector(
         result.normal,
-        -result.normal.dot(playerVelocity)
+        -result.normal.dot(playerVelocity),
       );
     }
 
@@ -208,7 +213,7 @@ function playerCollisions() {
 export function teleportPlayerIfOob() {
   if (player)
     teleportPlayerIfOob = () => {
-      if (player.position.y <= -25) {
+      if (player.position.y <= -14) {
         playerCollider.start.set(0, 0.45, 0);
         playerCollider.end.set(0, 1.45, 0);
 
@@ -224,6 +229,33 @@ export function initOctreeHelper() {
   worldOctreeHelper = new OctreeHelper(worldOctree);
   worldOctreeHelper.visible = false;
   scene.add(worldOctreeHelper);
+}
+
+// 添加一些角色快捷键
+export function initPlayerKey() {
+  let k = {};
+
+  addKeydownFun(code => {
+    k[code] = true;
+
+    if (k["KeyB"] && (k["ControlLeft"] || k["ControlRight"])) playerToHeight();
+  });
+  addKeyupFun(code => {
+    k[code] = false;
+  });
+}
+
+export function playerToHeight() {
+  playerCollider.start.set(132.39232987128665, 78, -135.86349411438695);
+  playerCollider.end.set(132.39232987128665, 79, -135.86349411438695);
+}
+
+// 修改跳跃高度
+export function changeTH(val) {
+  th = val;
+}
+export function changeSD(val) {
+  sd = val;
 }
 
 export {

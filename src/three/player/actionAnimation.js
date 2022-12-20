@@ -79,7 +79,7 @@ function changeAction(num) {
   currentAction
     .reset()
     .setEffectiveTimeScale(1)
-    .setEffectiveWeight(1)
+    .setEffectiveWeight(10)
     .fadeIn(switchSpeed)
     .play();
 }
@@ -222,7 +222,7 @@ function rotationAnimationPromise(_from, _to, duration) {
     };
 
     // 新动画开始时直接将上一个动画的状态强制置位完成状态
-    if (editPlayerDirectionTag) editPlayerDirectionTag.totalProgress(1);
+    if (editPlayerDirectionTag) editPlayerDirectionTag.kill();
     isAnimationTurnTo = true;
 
     editPlayerDirectionTag = gsap.to(params, {

@@ -18,21 +18,24 @@ export function loadEnv() {
 
   new GLTFLoader()
     .setDRACOLoader(dracoLoader)
-    .load("/model/world.glb", (gltf) => {
+    .load("/model/world.glb", gltf => {
       envModel = gltf.scene;
       scene.add(envModel);
       envModel.position.y -= 20;
 
-      envModel.traverse((child) => {
+      envModel.traverse(child => {
         // 铺设阴影
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
         }
 
-        if (child.name.includes("Plane003"))
+        if (child.name.includes("Plane003")) {
           // 水面处理
           initWater(child);
+        } else {
+          // child.visible = false;
+        }
 
         // 物理模型处理
         if (child.hasOwnProperty("userData")) {
@@ -50,7 +53,7 @@ export function loadEnv() {
 }
 
 export function loadPlayer() {
-  new GLTFLoader().load("/model/soldier.glb", (gltf) => {
+  new GLTFLoader().load("/model/soldier.glb", gltf => {
     player = gltf.scene;
     scene.add(player);
 

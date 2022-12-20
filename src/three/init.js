@@ -1,15 +1,17 @@
 import * as THREE from "three";
+import { initLoadManager } from "./widget/loading";
 
 import { scene } from "./basic";
 import { camera } from "./basic";
 import { renderer } from "./basic";
 import { orbitController } from "./basic";
+import { initToggleSky } from "./basic/scene";
 
 import { createLight } from "./widget/light";
 import { initGui, gui } from "./widget/gui";
 
 import { loadEnv, loadPlayer, playerMixer } from "./modify/loadModel";
-import { water } from "./modify/water";
+import { updateWater } from "./modify/water";
 
 import { initResizeListen } from "./listen/resize";
 import { initKeydownListen } from "./listen/keydown";
@@ -25,11 +27,14 @@ import {
   updatePlayerCapsulePosition,
   pointerOrbitController,
   teleportPlayerIfOob,
+  initPlayerKey,
 } from "./player/playerPhysics";
 
 let clock = new THREE.Clock();
+let timeCoefficient = 1;
 
 export function init(threeWrapper) {
+  initLoadManager();
   threeWrapper.appendChild(renderer.domElement);
   createLight();
 
@@ -37,6 +42,8 @@ export function init(threeWrapper) {
   initResizeListen(threeWrapper);
   initKeydownListen();
   initKeyupListen();
+  initToggleSky();
+  initPlayerKey();
   // 加载环境模型
   loadEnv();
   // 加载角色
@@ -51,7 +58,7 @@ export function init(threeWrapper) {
   initGui();
 
   let axesHelper = new THREE.AxesHelper(3.3);
-  scene.add(axesHelper);
+  // scene.add(axesHelper);
 }
 
 export function animationRender() {
@@ -60,7 +67,7 @@ export function animationRender() {
   // 更新渲染器
   renderer.render(scene, camera);
 
-  let deltaTimes = clock.getDelta();
+  let deltaTimes = clock.getDelta() * timeCoefficient;
 
   // 更新角色的动画动作
   updatePlayerAnimation();
@@ -72,7 +79,7 @@ export function animationRender() {
   teleportPlayerIfOob();
 
   // 更新水面
-  water && (water.material.uniforms["time"].value += 1.0 / 60.0);
+  updateWater();
 
   // 更新模型动画
   playerMixer && playerMixer.update(deltaTimes);
@@ -80,4 +87,8 @@ export function animationRender() {
   if (pointerOrbitController.isLocked) {
     pointerOrbitController.update();
   }
+}
+
+export function changeTimeCoefficient(val) {
+  timeCoefficient = val;
 }

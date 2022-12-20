@@ -6,8 +6,6 @@ let sun;
 export function createSun() {
   sun = new Sun(0xff0000);
 
-  console.log(sun);
-
   sun.setPosition(5, 250, -2);
 
   scene.add(sun.light);
