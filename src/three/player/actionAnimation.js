@@ -51,6 +51,7 @@ let lookatMesh = new THREE.Mesh(
   new THREE.SphereGeometry(0.1),
   new THREE.MeshStandardMaterial({ color: 0x0ff })
 );
+lookatMesh.visible = false;
 
 // 初始化角色动画
 export function initPlayerActionAnimation() {

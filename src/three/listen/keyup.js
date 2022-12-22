@@ -3,6 +3,8 @@ const keyupCallbackFunctions = [];
 export function initKeyupListen() {
   window.addEventListener("keyup", (event) => {
     keyupCallbackFunctions.forEach((f) => f(event.code));
+
+    event.preventDefault();
   });
 }
 
