@@ -9,6 +9,46 @@
       </div>
     </div>
   </div>
+
+  <div class="tab-tips" v-show="!isTab">按Tab查看操作提示</div>
+  <div class="tab-tips-plane" v-show="isTab">
+    <li>
+      <span class="key-code">W</span>
+      <span class="text">前进</span>
+    </li>
+    <li>
+      <span class="key-code">S</span>
+      <span class="text">后退</span>
+    </li>
+    <li>
+      <span class="key-code">A</span>
+      <span class="text">左移</span>
+    </li>
+    <li>
+      <span class="key-code">D</span>
+      <span class="text">右移</span>
+    </li>
+    <li>
+      <span class="key-code">空格</span>
+      <span class="text">跳跃</span>
+    </li>
+    <li>
+      <span class="key-code">Shift</span>
+      <span class="text">加速</span>
+    </li>
+    <li>
+      <span class="key-code">Ctrl</span>
+      <span class="add">+</span>
+      <span class="key-code">B</span>
+      <span class="text">移动到高处</span>
+    </li>
+    <li>
+      <span class="key-code">Ctrl</span>
+      <span class="add">+</span>
+      <span class="key-code">Y</span>
+      <span class="text">切换天气</span>
+    </li>
+  </div>
 </template>
 
 <script setup>
@@ -18,10 +58,11 @@ import * as THREE from "three";
 import { init, animationRender } from "./three/init";
 import { pointerLock } from "./three/player/playerPhysics";
 import { loadingEndFun } from "./three/widget/loading";
-
-console.warn = () => {};
+import { addKeydownFun } from "./three/listen/keydown";
+import { addKeyupFun } from "./three/listen/keyup";
 
 let isLoadEnd = ref(false);
+let isTab = ref(false);
 
 loadingEndFun.push(() => {
   isLoadEnd.value = true;
@@ -36,7 +77,21 @@ function getRendererDom(el) {
 onMounted(() => {
   init(threeWrapper);
   animationRender();
+
+  addTabKeyFun();
 });
+
+function addTabKeyFun() {
+  addKeydownFun(code => {
+    if (!isLoadEnd.value) return;
+
+    if (code === "Tab") isTab.value = true;
+  });
+
+  addKeyupFun(code => {
+    if (code === "Tab") isTab.value = false;
+  });
+}
 </script>
 
 <style>
@@ -132,5 +187,59 @@ canvas {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.tab-tips {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  bottom: 0;
+
+  background-color: #0005;
+  color: #fff;
+  padding: 5px 7px;
+  border-radius: 0 10px 0 0;
+}
+.tab-tips-plane {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #000;
+  padding: 15px 20px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 3px #9ba2b1;
+  width: 300px;
+}
+.tab-tips-plane li {
+  font-size: 0;
+  margin-bottom: 15px;
+}
+.tab-tips-plane li:last-child {
+  margin-bottom: 0;
+}
+.tab-tips-plane li span.key-code {
+  text-align: center;
+  margin-left: 2px;
+  background: #eff0f2;
+  box-shadow: inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9,
+    0 2px 3px #000;
+  color: #111;
+  border-radius: 2px;
+  font-size: 14px;
+  font-family: "Cutive Mono", monospace;
+  padding: 2px 5px;
+  margin-right: 2px;
+}
+.tab-tips-plane li span.add {
+  font-size: 16px;
+  color: #fff;
+}
+.tab-tips-plane li span.text {
+  /* margin-left: 50px; */
+  font-size: 14px;
+  color: #fff;
+  float: right;
 }
 </style>
