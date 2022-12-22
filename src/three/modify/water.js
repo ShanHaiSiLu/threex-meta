@@ -35,10 +35,12 @@ export function updateWater() {
 
 // 使用threejs官方water类，效果不好，废弃
 export function initWater(waterPlane) {
+  let path_prefix = import.meta.env.VITE_PUBLIC_PATH || "";
+
   waterPlane.material.side = THREE.DoubleSide;
   water = new Water(waterPlane.geometry, {
     waterNormals: new THREE.TextureLoader().load(
-      "/textures/water/waternormals.jpg",
+      path_prefix + "/textures/water/waternormals.jpg",
       function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       },

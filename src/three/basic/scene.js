@@ -14,10 +14,12 @@ let scene = new THREE.Scene();
 // scene.fog = new THREE.FogExp2(0x000000, 0.02);
 // new THREE.Fog(0x9a9a9a, 0, 128);
 
+let path_prefix = import.meta.env.VITE_PUBLIC_PATH || "";
+
 // 增加天空贴图
 let akyLoader = new RGBELoader();
 for (let i = 1; i <= 5; i++) {
-  akyLoader.load(`/hdr/sky${i}.hdr`, texture => {
+  akyLoader.load(`${path_prefix}/hdr/sky${i}.hdr`, texture => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
 
     skys.push(texture);
