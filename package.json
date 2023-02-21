@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "build:giteepages": "vite build --mode giteepages",
-    "build:githubpages": "vite build --mode giteepages",
+    "build:githubpages": "vite build --mode githubpages",
     "preview": "vite preview"
   },
   "dependencies": {
