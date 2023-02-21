@@ -6,7 +6,7 @@ export function initLoadManager() {
   THREE.DefaultLoadingManager.onStart = function () {};
 
   THREE.DefaultLoadingManager.onLoad = function () {
-    console.log("手偶明资源加载完成！");
+    console.log("初始资源加载完成！");
     loadingEndFun.forEach(f => f());
     THREE.DefaultLoadingManager.onLoad = () => {};
   };
