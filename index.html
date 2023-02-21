@@ -8,6 +8,15 @@
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      // 创建关于缓存的工作者线程，用来修改请求参数实现对模型文件的浏览器本地存储
+      if ("serviceWorker" in navigator)
+        navigator.serviceWorker
+          .register("/cacheServiceWorker.js", { scope: "/" })
+          .then(e => {
+            console.log("工作者线程已加载", e);
+          }, console.error);
+    </script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
