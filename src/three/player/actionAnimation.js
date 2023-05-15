@@ -141,14 +141,14 @@ function updatePlayerAnimationDirection() {
   animationCameraDirection.normalize();
 
   let angle =
-    keyAnimationStates["KeyW"] || keyAnimationStates["KeyS"]
+    keyAnimationDirection.z
       ? Math.PI / 4
       : Math.PI / 2;
 
   angle *= keyAnimationDirection.x || 1;
   angle *= keyAnimationStates[modelZisPlayerFace ? "KeyS" : "KeyW"] ? -1 : 1;
 
-  if (keyAnimationStates["KeyA"] || keyAnimationStates["KeyD"]) {
+  if (keyAnimationDirection.x) {
     animationCameraDirection.applyEuler(new THREE.Euler(0, angle, 0));
   }
 
